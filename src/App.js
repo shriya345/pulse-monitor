@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
-
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 // ─── Palette & Theme ────────────────────────────────────────────────────────
 const COLORS = {
   bg: "#0a0d14",
@@ -143,20 +142,6 @@ const MetricCard = ({ label, value, unit, color, sub }) => (
     </div>
     {sub && <div style={{ fontSize: 11, color: COLORS.textMuted, marginTop: 4 }}>{sub}</div>}
   </div>
-);
-
-const Sparkline = ({ data, color }) => (
-  <ResponsiveContainer width="100%" height={48}>
-    <AreaChart data={data} margin={{ top: 2, right: 0, bottom: 0, left: 0 }}>
-      <defs>
-        <linearGradient id={`sg-${color?.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="5%" stopColor={color} stopOpacity={0.3} />
-          <stop offset="95%" stopColor={color} stopOpacity={0} />
-        </linearGradient>
-      </defs>
-      <Area type="monotone" dataKey="latency" stroke={color} strokeWidth={1.5} fill={`url(#sg-${color?.replace("#", "")})`} dot={false} isAnimationActive={false} />
-    </AreaChart>
-  </ResponsiveContainer>
 );
 
 const UptimeBar = ({ logs }) => {
