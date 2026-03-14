@@ -1,3 +1,4 @@
+const BACKEND_URL = "https://pulse-monitor-backend-production.up.railway.app";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 // ─── Palette & Theme ────────────────────────────────────────────────────────
@@ -30,27 +31,10 @@ const DEFAULT_MONITORS = [
   { id: 5, name: "Twilio API", url: "https://api.twilio.com/2010-04-01", interval: 60, threshold: 3, enabled: false },
 ];
 
-// ─── Simulation Engine ───────────────────────────────────────────────────────
-function simulateCheck(monitor, tick) {
-  // Inject occasional failures and latency spikes
-  const failureWindows = {
-    3: tick > 8 && tick < 14,    // OpenWeather goes down
-    4: tick > 20 && tick < 23,   // Stripe brief outage
-    2: tick === 15 || tick === 30, // JSONPlaceholder flaps
-  };
-
-  const isDown = failureWindows[monitor.id] || (Math.random() < 0.04);
-  const baseLatency = { 1: 120, 2: 45, 3: 280, 4: 190, 5: 310 }[monitor.id] || 150;
-  const latency = isDown ? 0 : Math.round(baseLatency + (Math.random() - 0.5) * baseLatency * 0.6);
-  const statusCode = isDown ? (Math.random() > 0.5 ? 503 : 0) : 200;
-
-  return {
-    timestamp: Date.now(),
-    isUp: !isDown,
-    latency,
-    statusCode,
-    tick,
-  };
+async function fetchRealData() {
+  const response = await fetch(`${BACKEND_URL}/status`);
+  const data = await response.json();
+  return data;
 }
 
 function calcUptimePct(logs) {
@@ -236,11 +220,22 @@ export default function App() {
     }));
   }, []);
 
-  useEffect(() => {
-    runChecks();
-    intervalRef.current = setInterval(runChecks, 3000);
-    return () => clearInterval(intervalRef.current);
-  }, [runChecks]);
+  seEffect(() => {
+  const fetchData = async () => {
+    try {
+      const data = await fetchRealData();
+      setMonitors(data.map(m => ({
+        ...m,
+        lastCheck: { isUp: m.lastStatus, latency: m.lastLatency, statusCode: 200 }
+      })));
+    } catch (e) {
+      console.error("Backend error:", e);
+    }
+  };
+  fetchData();
+  intervalRef.current = setInterval(fetchData, 10000);
+  return () => clearInterval(intervalRef.current);
+}, []);
 
   // ── AI Analysis ───────────────────────────────────────────────────────────
   const triggerAiAnalysis = async (monitor) => {
