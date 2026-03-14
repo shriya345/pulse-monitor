@@ -23,13 +23,7 @@ const COLORS = {
 };
 
 // ─── Simulated Endpoints ─────────────────────────────────────────────────────
-const DEFAULT_MONITORS = [
-  { id: 1, name: "GitHub API", url: "https://api.github.com", interval: 30, threshold: 3, enabled: true },
-  { id: 2, name: "JSONPlaceholder", url: "https://jsonplaceholder.typicode.com/posts/1", interval: 20, threshold: 2, enabled: true },
-  { id: 3, name: "OpenWeather", url: "https://api.openweathermap.org/data/2.5/weather", interval: 60, threshold: 3, enabled: true },
-  { id: 4, name: "Stripe API", url: "https://api.stripe.com/v1/charges", interval: 45, threshold: 2, enabled: true },
-  { id: 5, name: "Twilio API", url: "https://api.twilio.com/2010-04-01", interval: 60, threshold: 3, enabled: false },
-];
+const DEFAULT_MONITORS = [];
 
 async function fetchRealData() {
   const response = await fetch(`${BACKEND_URL}/status`);
