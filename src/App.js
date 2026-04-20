@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 
-const BACKEND_URL = "https://pulse-monitor-backend-production.up.railway.app";
+const BACKEND_URL = "https://pulse-monitor-backend-iadl.onrender.com";
 
 // ─── Palette & Theme ────────────────────────────────────────────────────────
 const COLORS = {
